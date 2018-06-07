@@ -1,0 +1,15 @@
+[submodule "IS511"]
+	path = target/IS511
+	url = https://github.com/saykim0727/IS511/
+[submodule "NoMiner"]
+	path = target/NoMiner
+	url = https://github.com/AhnMo/NoMiner
+[submodule "MinerBlock"]
+	path = target/MinerBlock
+	url = https://github.com/AhnMo/MinerBlock
+[submodule "NoCoin"]
+	path = target/NoCoin
+	url = https://github.com/AhnMo/NoCoin
+[submodule "CoinHive-blocker"]
+	path = target/CoinHive-blocker
+	url = https://github.com/AhnMo/CoinHive-blocker
