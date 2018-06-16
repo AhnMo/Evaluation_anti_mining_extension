@@ -1,6 +1,3 @@
-[submodule "IS511"]
-	path = target/IS511
-	url = https://github.com/saykim0727/IS511/
 [submodule "NoMiner"]
 	path = target/NoMiner
 	url = https://github.com/AhnMo/NoMiner
@@ -13,3 +10,6 @@
 [submodule "CoinHive-blocker"]
 	path = target/CoinHive-blocker
 	url = https://github.com/AhnMo/CoinHive-blocker
+[submodule "Mining-Blocker"]
+	path = target/Mining-Blocker
+	url = https://github.com/AhnMo/Mining-Blocker
